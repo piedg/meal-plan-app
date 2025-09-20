@@ -2,18 +2,45 @@ import { useEffect, useState } from 'react';
 import supabase from '../utils/dbconnection.js';
 
 export default function useGlobalData() {
-    const [instruments, setInstruments] = useState([]);
+    const [ingredients, setIngredients] = useState([]);
+    const [filteredIngredients, setFilteredIngredients] = useState([]);
 
     useEffect(() => {
-        getInstruments();
+        getIngredients();
     }, []);
 
-    async function getInstruments() {
+    async function getIngredients() {
         const { data } = await supabase.from('ingredients').select('*');
-        setInstruments(data);
+        setIngredients(data);
+        setFilteredIngredients(data);
+    }
+
+    async function findIngredient(query) {
+        if (!query) {
+            setFilteredIngredients(ingredients);
+            return;
+        }
+
+        const { data } = await supabase
+            .from('ingredients')
+            .select('*')
+            .ilike('name', `%${query}%`);
+
+        setFilteredIngredients(data);
+    }
+
+    async function addIngredient(newIngredient) {
+        const { data } = await supabase
+            .from('ingredients')
+            .insert([newIngredient])
+            .select();
+        setIngredients((prev) => [...prev, ...data]);
+        setFilteredIngredients((prev) => [...prev, ...data]);
     }
 
     return {
-        instruments,
+        findIngredient,
+        filteredIngredients,
+        addIngredient,
     };
 }
