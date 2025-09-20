@@ -38,9 +38,20 @@ export default function useGlobalData() {
         setFilteredIngredients((prev) => [...prev, ...data]);
     }
 
+    async function deleteIngredient(id) {
+        await supabase.from('ingredients').delete().eq('id', id);
+        setIngredients((prev) =>
+            prev.filter((ingredient) => ingredient.id !== id)
+        );
+        setFilteredIngredients((prev) =>
+            prev.filter((ingredient) => ingredient.id !== id)
+        );
+    }
+
     return {
         findIngredient,
         filteredIngredients,
         addIngredient,
+        deleteIngredient,
     };
 }
