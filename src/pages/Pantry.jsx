@@ -10,19 +10,20 @@ import {
     InputGroup,
     Form,
     Row,
-    Alert,
     Button,
 } from 'react-bootstrap';
 
 export default function Pantry() {
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState({});
-    const { filteredIngredients, addIngredient, deleteIngredient } =
-        useContext(GlobalContext);
+    const { filteredIngredients, addIngredient, deleteIngredient } = useContext(GlobalContext);
 
-    const ingredientNameRef = useRef('');
-    const ingredientQuantityRef = useRef('');
+    let ingredientNameRef = useRef('');
+    let ingredientQuantityRef = useRef('');
     const ingredientUnitRef = useRef('');
+
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    const quantityRegex = /^[0-9]+$/;
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -30,6 +31,24 @@ export default function Pantry() {
         let ingredientName = ingredientNameRef.current.value;
         let ingredientQuantity = ingredientQuantityRef.current.value;
         let ingredientUnit = ingredientUnitRef.current.value;
+
+        if (!nameRegex.test(ingredientName)) {
+            setShowAlert(true);
+            setAlertMessage({
+                header: 'Invalid ingredient name',
+                body: '',
+            });
+            return
+        }
+
+        if (!quantityRegex.test(ingredientQuantity)) {
+            setShowAlert(true);
+            setAlertMessage({
+                header: 'Invalid ingredient quantity',
+                body: '',
+            });
+            return
+        }
 
         if (
             ingredientName == undefined ||
@@ -57,13 +76,28 @@ export default function Pantry() {
             return;
         }
 
-        const ingredientData = {
-            name: ingredientName,
-            quantity: ingredientQuantity,
-            unit: ingredientUnit,
-        };
+        const existingIngredient = filteredIngredients.find(
+            (ingredient) => ingredient.name.toLowerCase().trim() === ingredientName.toLowerCase().trim()
+        );
 
-        addIngredient(ingredientData);
+        if (existingIngredient) {
+            setShowAlert(true);
+            setAlertMessage({
+                header: 'The ingredient already exists',
+                body: '',
+            });
+            return;
+        } else {
+            const ingredientData = {
+                name: ingredientName,
+                quantity: ingredientQuantity,
+                unit: ingredientUnit,
+            };
+            addIngredient(ingredientData);
+            ingredientNameRef.current.value = "";
+            ingredientQuantityRef.current.value = "";
+            setShowAlert(false);
+        }
     };
 
     return (
@@ -72,12 +106,16 @@ export default function Pantry() {
                 <Row className="justify-content-center">
                     <InputGroup className="mb-3">
                         <Form.Control
+                            type='text'
                             ref={ingredientNameRef}
                             placeholder="Ingredient name"
+                            maxLength={25}
                         />
                         <Form.Control
+                            type='number'
                             ref={ingredientQuantityRef}
                             placeholder="Ingredient quantity"
+                            maxLength={10}
                         />
                         <Form.Select
                             ref={ingredientUnitRef}
@@ -124,7 +162,6 @@ export default function Pantry() {
                                 Delete
                             </Dropdown.Item>
                             <Dropdown.Item>Update</Dropdown.Item>
-                            <Dropdown.Item>Something else</Dropdown.Item>
                         </DropdownButton>
                     </ListGroup.Item>
                 ))}
