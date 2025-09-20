@@ -17,12 +17,13 @@ export default function Pantry() {
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState({});
     const { filteredIngredients, addIngredient, deleteIngredient } = useContext(GlobalContext);
+    const [quantity, setQuantity] = useState("");
 
     let ingredientNameRef = useRef('');
     let ingredientQuantityRef = useRef('');
     const ingredientUnitRef = useRef('');
 
-    const nameRegex = /^[a-zA-Z\s]+$/;
+    const nameRegex = /^[a-zA-ZàèéìòùÀÈÉÌÒÙ'\s]+$/;
     const quantityRegex = /^[0-9]+$/;
 
     const handleSubmit = (e) => {
@@ -100,6 +101,13 @@ export default function Pantry() {
         }
     };
 
+    function handleQuantityInput(e) {
+        const value = e.target.value;
+        if (value.length < 10) {
+            setQuantity(value);
+        }
+    }
+
     return (
         <>
             <Form onSubmit={handleSubmit}>
@@ -109,13 +117,14 @@ export default function Pantry() {
                             type='text'
                             ref={ingredientNameRef}
                             placeholder="Ingredient name"
-                            maxLength={25}
+                            maxLength={24}
                         />
                         <Form.Control
                             type='number'
                             ref={ingredientQuantityRef}
                             placeholder="Ingredient quantity"
-                            maxLength={10}
+                            value={quantity}
+                            onChange={(e) => handleQuantityInput(e)}
                         />
                         <Form.Select
                             ref={ingredientUnitRef}
