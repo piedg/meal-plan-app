@@ -16,8 +16,9 @@ import {
 export default function Pantry() {
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState({});
-    const { filteredIngredients, addIngredient, deleteIngredient, updateIngredient } = useContext(GlobalContext);
+    const { filteredIngredients, addIngredient, deleteIngredient, findIngredient, updateIngredient } = useContext(GlobalContext);
     const [quantity, setQuantity] = useState("");
+    const [searchInput, setSearchInput] = useState("");
     const [editingId, setEditingId] = useState(null);
 
     let ingredientNameRef = useRef('');
@@ -151,8 +152,26 @@ export default function Pantry() {
         setShowAlert(false);
     };
 
+    function handleSearch(value) {
+        setSearchInput(value);
+
+        findIngredient(value.trim());
+    }
+
     return (
         <>
+            <div className='my-3'>
+                <Form.Control
+                    type="text"
+                    id="searchBar"
+                    aria-describedby="searchBar"
+                    placeholder='Search'
+                    onChange={(e) => handleSearch(e.target.value)}
+                />
+                <Form.Text id="searchBar">
+                    Search an ingredient inside your pantry
+                </Form.Text>
+            </div>
             <Form onSubmit={handleSubmit}>
                 <Row className="justify-content-center">
                     <InputGroup className="mb-3">

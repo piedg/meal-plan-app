@@ -9,6 +9,9 @@ export default function useGlobalData() {
         getIngredients();
     }, []);
 
+    useEffect(() => {
+    }, [ingredients]);
+
     async function getIngredients() {
         const { data } = await supabase.from('ingredients').select('*');
         setIngredients(data);
@@ -48,10 +51,15 @@ export default function useGlobalData() {
         );
     }
 
+    async function updateIngredient(id) {
+        console.log("Update ingredient")
+    }
+
     return {
         findIngredient,
         filteredIngredients,
         addIngredient,
         deleteIngredient,
+        updateIngredient
     };
 }
