@@ -1,5 +1,6 @@
-import { useContext, useRef, useState } from 'react';
+import { useContext, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../contexts/GlobalContextProvider.jsx';
+import debounce from '../utils/debounce.js';
 
 import CustomAlert from '../components/CustomAlert.jsx';
 
@@ -16,9 +17,14 @@ import {
 export default function Pantry() {
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState({});
-    const { filteredIngredients, addIngredient, deleteIngredient, findIngredient, updateIngredient } = useContext(GlobalContext);
-    const [quantity, setQuantity] = useState("");
-    const [searchInput, setSearchInput] = useState("");
+    const {
+        filteredIngredients,
+        addIngredient,
+        deleteIngredient,
+        setSearchQuery,
+        updateIngredient,
+    } = useContext(GlobalContext);
+    const [quantity, setQuantity] = useState('');
     const [editingId, setEditingId] = useState(null);
 
     let ingredientNameRef = useRef('');
@@ -29,6 +35,15 @@ export default function Pantry() {
 
     const nameRegex = /^[a-zA-ZàèéìòùÀÈÉÌÒÙ'\s]+$/;
     const quantityRegex = /^[0-9]+$/;
+
+    const debouncedSearchQuery = useMemo(
+        () => debounce(setSearchQuery, 500),
+        [setSearchQuery]
+    );
+
+    function handleSearch(value) {
+        debouncedSearchQuery(value);
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -43,7 +58,7 @@ export default function Pantry() {
                 header: 'Invalid ingredient name',
                 body: '',
             });
-            return
+            return;
         }
 
         if (!quantityRegex.test(ingredientQuantity)) {
@@ -52,7 +67,7 @@ export default function Pantry() {
                 header: 'Invalid ingredient quantity',
                 body: '',
             });
-            return
+            return;
         }
 
         if (
@@ -82,7 +97,9 @@ export default function Pantry() {
         }
 
         const existingIngredient = filteredIngredients.find(
-            (ingredient) => ingredient.name.toLowerCase().trim() === ingredientName.toLowerCase().trim()
+            (ingredient) =>
+                ingredient.name.toLowerCase().trim() ===
+                ingredientName.toLowerCase().trim()
         );
 
         if (existingIngredient) {
@@ -99,8 +116,8 @@ export default function Pantry() {
                 unit: ingredientUnit,
             };
             addIngredient(ingredientData);
-            ingredientNameRef.current.value = "";
-            ingredientQuantityRef.current.value = "";
+            ingredientNameRef.current.value = '';
+            ingredientQuantityRef.current.value = '';
             setShowAlert(false);
         }
     };
@@ -152,20 +169,14 @@ export default function Pantry() {
         setShowAlert(false);
     };
 
-    function handleSearch(value) {
-        setSearchInput(value);
-
-        findIngredient(value.trim());
-    }
-
     return (
         <>
-            <div className='my-3'>
+            <div className="my-3">
                 <Form.Control
                     type="text"
                     id="searchBar"
                     aria-describedby="searchBar"
-                    placeholder='Search'
+                    placeholder="Search"
                     onChange={(e) => handleSearch(e.target.value)}
                 />
                 <Form.Text id="searchBar">
@@ -176,13 +187,13 @@ export default function Pantry() {
                 <Row className="justify-content-center">
                     <InputGroup className="mb-3">
                         <Form.Control
-                            type='text'
+                            type="text"
                             ref={ingredientNameRef}
                             placeholder="Ingredient name"
                             maxLength={24}
                         />
                         <Form.Control
-                            type='number'
+                            type="number"
                             ref={ingredientQuantityRef}
                             placeholder="Ingredient quantity"
                             value={quantity}
@@ -225,18 +236,21 @@ export default function Pantry() {
                         {editingId === ingredient.id ? (
                             <>
                                 <Form.Control
-                                    type='text'
+                                    type="text"
                                     ref={editIngredientNameRef}
                                     defaultValue={ingredient.name}
                                     className="me-2"
                                 />
                                 <Form.Control
-                                    type='number'
+                                    type="number"
                                     ref={editIngredientQuantityRef}
                                     defaultValue={ingredient.quantity}
                                     className="me-2"
                                 />
-                                <Button variant="success" onClick={() => handleSave(ingredient.id)}>
+                                <Button
+                                    variant="success"
+                                    onClick={() => handleSave(ingredient.id)}
+                                >
                                     Save
                                 </Button>
                             </>
@@ -248,10 +262,18 @@ export default function Pantry() {
                                     id="dropdown-basic-button"
                                     title="Options"
                                 >
-                                    <Dropdown.Item onClick={() => deleteIngredient(ingredient.id)}>
+                                    <Dropdown.Item
+                                        onClick={() =>
+                                            deleteIngredient(ingredient.id)
+                                        }
+                                    >
                                         Delete
                                     </Dropdown.Item>
-                                    <Dropdown.Item onClick={() => handleUpdate(ingredient.id)}>
+                                    <Dropdown.Item
+                                        onClick={() =>
+                                            handleUpdate(ingredient.id)
+                                        }
+                                    >
                                         Update
                                     </Dropdown.Item>
                                 </DropdownButton>
