@@ -114,9 +114,11 @@ export default function Pantry() {
                 quantity: ingredientQuantity,
                 unit: ingredientUnit,
             };
+
             addIngredient(ingredientData);
             ingredientNameRef.current.value = '';
-            ingredientQuantityRef.current.value = '';
+            ingredientQuantityRef.current.value = ''; // ridondante?
+            setQuantity('');
             setShowAlert(false);
         }
     };
