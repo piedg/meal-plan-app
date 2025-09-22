@@ -10,25 +10,22 @@ function App() {
     return (
         <main>
             <Container>
-                <Row className="justify-content-md-center">
-                    <Col md="auto" >
-                        <h1>Meal Plan App</h1>
-                        <nav>
-                            <Nav fill variant="tabs" defaultActiveKey="/home">
-                                <Nav.Item>
-                                    <NavLink to="/recipes">Recipes</NavLink>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <NavLink to="/pantry">Pantry</NavLink>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <NavLink to="/mealplan">Meal Plan</NavLink>
-                                </Nav.Item>
-                            </Nav>
-                        </nav>
-                        <Outlet />
-                    </Col>
-                </Row>
+
+                <h1 className='text-center'>Meal Plan App</h1>
+                <nav>
+                    <Nav fill variant="tabs" defaultActiveKey="/home">
+                        <Nav.Item>
+                            <NavLink to="/recipes">Recipes</NavLink>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <NavLink to="/pantry">Pantry</NavLink>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <NavLink to="/mealplan">Meal Plan</NavLink>
+                        </Nav.Item>
+                    </Nav>
+                </nav>
+                <Outlet />
             </Container>
         </main>
     );
