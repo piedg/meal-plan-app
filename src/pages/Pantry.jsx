@@ -1,7 +1,6 @@
 import { useContext, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../contexts/GlobalContextProvider.jsx';
 import debounce from '../utils/debounce.js';
-
 import CustomAlert from '../components/CustomAlert.jsx';
 
 import {
@@ -52,24 +51,6 @@ export default function Pantry() {
         let ingredientQuantity = ingredientQuantityRef.current.value;
         let ingredientUnit = ingredientUnitRef.current.value;
 
-        if (!nameRegex.test(ingredientName)) {
-            setShowAlert(true);
-            setAlertMessage({
-                header: 'Invalid ingredient name',
-                body: '',
-            });
-            return;
-        }
-
-        if (!quantityRegex.test(ingredientQuantity)) {
-            setShowAlert(true);
-            setAlertMessage({
-                header: 'Invalid ingredient quantity',
-                body: '',
-            });
-            return;
-        }
-
         if (
             ingredientName == undefined ||
             ingredientName == null ||
@@ -78,6 +59,15 @@ export default function Pantry() {
             setShowAlert(true);
             setAlertMessage({
                 header: 'Should insert a ingredient name',
+                body: '',
+            });
+            return;
+        }
+
+        if (!nameRegex.test(ingredientName)) {
+            setShowAlert(true);
+            setAlertMessage({
+                header: 'Invalid ingredient name',
                 body: '',
             });
             return;
@@ -101,6 +91,15 @@ export default function Pantry() {
                 ingredient.name.toLowerCase().trim() ===
                 ingredientName.toLowerCase().trim()
         );
+
+        if (!quantityRegex.test(ingredientQuantity)) {
+            setShowAlert(true);
+            setAlertMessage({
+                header: 'Invalid ingredient quantity',
+                body: '',
+            });
+            return;
+        }
 
         if (existingIngredient) {
             setShowAlert(true);
@@ -256,11 +255,12 @@ export default function Pantry() {
                             </>
                         ) : (
                             <>
-                                <span>{ingredient.name}</span>
-                                <span>{`${ingredient.quantity} ${ingredient.unit}`}</span>
+                                <span style={{ flexBasis: '35%' }}>{ingredient.name}</span>
+                                <span style={{ flexBasis: '30%' }}>{`${ingredient.quantity} ${ingredient.unit}`}</span>
                                 <DropdownButton
                                     id="dropdown-basic-button"
                                     title="Options"
+
                                 >
                                     <Dropdown.Item
                                         onClick={() =>
