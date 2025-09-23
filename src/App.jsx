@@ -2,17 +2,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { Outlet, NavLink } from 'react-router';
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
 
 function App() {
     return (
         <main>
-            <Container>
-
+            <Container >
                 <h1 className='text-center'>Meal Plan App</h1>
-                <nav>
+                <nav className='mb-3'>
                     <Nav fill variant="tabs" defaultActiveKey="/home">
                         <Nav.Item>
                             <NavLink to="/recipes">Recipes</NavLink>

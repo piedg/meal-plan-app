@@ -44,13 +44,7 @@ export default function Pantry() {
         debouncedSearchQuery(value);
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        let ingredientName = ingredientNameRef.current.value;
-        let ingredientQuantity = ingredientQuantityRef.current.value;
-        let ingredientUnit = ingredientUnitRef.current.value;
-
+    const hasAddIngredientErrors = (ingredientName, ingredientQuantity,) => {
         if (
             ingredientName == undefined ||
             ingredientName == null ||
@@ -61,7 +55,7 @@ export default function Pantry() {
                 header: 'Should insert a ingredient name',
                 body: '',
             });
-            return;
+            return true;
         }
 
         if (!nameRegex.test(ingredientName)) {
@@ -70,7 +64,7 @@ export default function Pantry() {
                 header: 'Invalid ingredient name',
                 body: '',
             });
-            return;
+            return true;
         }
 
         if (
@@ -83,7 +77,16 @@ export default function Pantry() {
                 header: 'Should insert a ingredient quantity',
                 body: '',
             });
-            return;
+            return true;
+        }
+
+        if (!quantityRegex.test(ingredientQuantity)) {
+            setShowAlert(true);
+            setAlertMessage({
+                header: 'Invalid ingredient quantity',
+                body: '',
+            });
+            return true;
         }
 
         const existingIngredient = filteredIngredients.find(
@@ -92,21 +95,25 @@ export default function Pantry() {
                 ingredientName.toLowerCase().trim()
         );
 
-        if (!quantityRegex.test(ingredientQuantity)) {
-            setShowAlert(true);
-            setAlertMessage({
-                header: 'Invalid ingredient quantity',
-                body: '',
-            });
-            return;
-        }
-
         if (existingIngredient) {
             setShowAlert(true);
             setAlertMessage({
                 header: 'The ingredient already exists',
                 body: '',
             });
+            return true;
+        }
+        return false;
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        let ingredientName = ingredientNameRef.current.value;
+        let ingredientQuantity = ingredientQuantityRef.current.value;
+        let ingredientUnit = ingredientUnitRef.current.value;
+
+        if (hasAddIngredientErrors(ingredientName, ingredientQuantity, ingredientUnit)) {
             return;
         } else {
             const ingredientData = {
@@ -121,7 +128,8 @@ export default function Pantry() {
             setQuantity('');
             setShowAlert(false);
         }
-    };
+    }
+
 
     function handleQuantityInput(e) {
         const value = e.target.value;
@@ -172,7 +180,8 @@ export default function Pantry() {
 
     return (
         <>
-            <div className="my-3">
+            <div>
+                <h1 className='text-center'>Pantry</h1>
                 <Form.Control
                     type="text"
                     id="searchBar"
@@ -248,6 +257,17 @@ export default function Pantry() {
                                     defaultValue={ingredient.quantity}
                                     className="me-2"
                                 />
+                                <Form.Select
+                                    ref={ingredientUnitRef}
+                                    aria-label="Default select"
+                                >
+                                    <option value="kg">kg</option>
+                                    <option value="g">g</option>
+                                    <option value="l">l</option>
+                                    <option value="ml">ml</option>
+                                    <option value="unit">unit</option>
+                                    <option value="tsp">tsp</option>
+                                </Form.Select>
                                 <Button
                                     variant="success"
                                     onClick={() => handleSave(ingredient.id)}
@@ -266,18 +286,19 @@ export default function Pantry() {
                                 >
                                     <Dropdown.Item
                                         onClick={() =>
-                                            deleteIngredient(ingredient.id)
-                                        }
-                                    >
-                                        Delete
-                                    </Dropdown.Item>
-                                    <Dropdown.Item
-                                        onClick={() =>
                                             handleUpdate(ingredient.id)
                                         }
                                     >
                                         Update
                                     </Dropdown.Item>
+                                    <Dropdown.Item
+                                        onClick={() =>
+                                            deleteIngredient(ingredient.id)
+                                        }
+                                    >
+                                        Delete
+                                    </Dropdown.Item>
+
                                 </DropdownButton>
                             </>
                         )}
