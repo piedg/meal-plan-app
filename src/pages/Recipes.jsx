@@ -4,6 +4,11 @@ import { Button, Modal, Form, InputGroup } from "react-bootstrap";
 
 export default function Recipes() {
     const [show, setShow] = useState(false);
+    const [currentIngredients, setCurrentIngredients] = useState([]);
+
+    const ingredientUnitRef = useRef('');
+    const ingredientNameRef = useRef('');
+    const ingredientQuantityRef = useRef('');
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -12,6 +17,17 @@ export default function Recipes() {
         filteredIngredients,
         addIngredient,
     } = useContext(GlobalContext);
+
+    function addIngredientToRecipe(e) {
+        e.preventDefault();
+        let ingredientName = ingredientNameRef.current.value;
+        let ingredientQuantity = ingredientQuantityRef.current.value;
+        let ingredientUnit = ingredientUnitRef.current.value;
+
+        setCurrentIngredients(prev => [...prev, { name: ingredientName, quantity: ingredientQuantity, unit: ingredientUnit }])
+
+        console.log(currentIngredients)
+    }
 
     return (
         <>
@@ -26,7 +42,7 @@ export default function Recipes() {
                 <Modal.Body>
                     <Form>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Name</Form.Label>
+                            <Form.Label>Recipe Name</Form.Label>
                             <Form.Control
                                 type="text"
                                 placeholder="Recipe name"
@@ -36,6 +52,7 @@ export default function Recipes() {
                         <Form.Label>Add ingredient</Form.Label>
                         <InputGroup className='mb-3'>
                             <Form.Control
+                                ref={ingredientNameRef}
                                 type="text"
                                 placeholder="Ingredient name"
                                 list="ingredientsList"
@@ -48,10 +65,11 @@ export default function Recipes() {
                             </datalist>
 
                             <Form.Control
+                                ref={ingredientQuantityRef}
                                 type="text"
                                 placeholder="Quantity"
                             />
-                            <Form.Select aria-label="Ingredient unit select">
+                            <Form.Select ref={ingredientUnitRef} aria-label="Ingredient unit select">
                                 <option value="kg">kg</option>
                                 <option value="g">g</option>
                                 <option value="l">l</option>
@@ -59,7 +77,7 @@ export default function Recipes() {
                                 <option value="unit">unit</option>
                                 <option value="tsp">tsp</option>
                             </Form.Select>
-                            <Button variant="primary">Add</Button>
+                            <Button onClick={(e) => addIngredientToRecipe(e)} variant="primary">Add</Button>
                         </InputGroup>
                         <Form.Group
                             className="mb-3"
