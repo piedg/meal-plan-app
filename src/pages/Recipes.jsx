@@ -1,4 +1,5 @@
 import { useContext, useMemo, useRef, useState } from 'react';
+import { GlobalContext } from '../contexts/GlobalContextProvider.jsx';
 import { Button, Modal, Form, InputGroup } from "react-bootstrap";
 
 export default function Recipes() {
@@ -6,6 +7,11 @@ export default function Recipes() {
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const {
+        filteredIngredients,
+        addIngredient,
+    } = useContext(GlobalContext);
 
     return (
         <>
@@ -32,16 +38,20 @@ export default function Recipes() {
                             <Form.Control
                                 type="text"
                                 placeholder="Ingredient name"
+                                list="ingredientsList"
                                 autoFocus
                             />
+                            <datalist id="ingredientsList">
+                                {filteredIngredients.map((ingredient) => (
+                                    <option key={ingredient.name} value={ingredient.name} />
+                                ))}
+                            </datalist>
+
                             <Form.Control
                                 type="text"
                                 placeholder="Quantity"
-                                autoFocus
                             />
-                            <Form.Select
-                                aria-label="Ingredient unit select"
-                            >
+                            <Form.Select aria-label="Ingredient unit select">
                                 <option value="kg">kg</option>
                                 <option value="g">g</option>
                                 <option value="l">l</option>
@@ -49,18 +59,8 @@ export default function Recipes() {
                                 <option value="unit">unit</option>
                                 <option value="tsp">tsp</option>
                             </Form.Select>
-                            <Button variant="primary" onClick={handleShow}>Add</Button>
-
+                            <Button variant="primary">Add</Button>
                         </InputGroup>
-                        <Form.Select
-                            className='mb-3'
-                            aria-label="PantryIngredientSelect"
-                        >
-                            <option value="kg">Ingredient from Pantry 1</option>
-                            <option value="kg">Ingredient from Pantry 2</option>
-                            <option value="kg">Ingredient from Pantry 3</option>
-
-                        </Form.Select>
                         <Form.Group
                             className="mb-3"
                             controlId="addRecipeForm.Instructions"
