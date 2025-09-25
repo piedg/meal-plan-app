@@ -183,15 +183,13 @@ export default function Pantry() {
             <div>
                 <h1 className='text-center'>Pantry</h1>
                 <Form.Control
+                    className='mb-3'
                     type="text"
                     id="searchBar"
                     aria-describedby="searchBar"
-                    placeholder="Search"
+                    placeholder="Search an ingredient inside your pantry"
                     onChange={(e) => handleSearch(e.target.value)}
                 />
-                <Form.Text id="searchBar">
-                    Search an ingredient inside your pantry
-                </Form.Text>
             </div>
             <Form onSubmit={handleSubmit}>
                 <Row className="justify-content-center">

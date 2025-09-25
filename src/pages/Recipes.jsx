@@ -1,6 +1,6 @@
 import { useContext, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../contexts/GlobalContextProvider.jsx';
-import { Button, Modal, Form, InputGroup } from "react-bootstrap";
+import { Button, Modal, Form, InputGroup, ListGroup } from "react-bootstrap";
 
 export default function Recipes() {
     const [show, setShow] = useState(false);
@@ -24,16 +24,17 @@ export default function Recipes() {
         let ingredientQuantity = ingredientQuantityRef.current.value;
         let ingredientUnit = ingredientUnitRef.current.value;
 
-        setCurrentIngredients(prev => [...prev, { name: ingredientName, quantity: ingredientQuantity, unit: ingredientUnit }])
 
-        console.log(currentIngredients)
+        ingredientNameRef.current.value = '';
+        ingredientQuantityRef.current.value = '';
+        setCurrentIngredients(prev => [...prev, { name: ingredientName, quantity: ingredientQuantity, unit: ingredientUnit }])
     }
 
     return (
         <>
             <h1 className='text-center'>Recipes</h1>
             <div className="d-flex justify-content-center">
-                <Button variant="primary" onClick={handleShow}>Add new recipe</Button>
+                <Button variant="primary" onClick={handleShow}>NEW RECIPE</Button>
             </div>
             <Modal size='lg' centered show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
@@ -45,7 +46,7 @@ export default function Recipes() {
                             <Form.Label>Recipe Name</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="Recipe name"
+                                placeholder="e.g. Tofu burger"
                                 autoFocus
                             />
                         </Form.Group>
@@ -54,7 +55,7 @@ export default function Recipes() {
                             <Form.Control
                                 ref={ingredientNameRef}
                                 type="text"
-                                placeholder="Ingredient name"
+                                placeholder="Name"
                                 list="ingredientsList"
                                 autoFocus
                             />
@@ -79,6 +80,18 @@ export default function Recipes() {
                             </Form.Select>
                             <Button onClick={(e) => addIngredientToRecipe(e)} variant="primary">Add</Button>
                         </InputGroup>
+                        <ListGroup>
+                            {currentIngredients.map((ingredient) => (
+                                <ListGroup.Item
+                                    as="li"
+                                    key={ingredient.name}
+                                    className="d-flex justify-content-between align-items-center"
+                                >
+                                    <span style={{ flexBasis: '50%' }}>{ingredient.name}</span>
+                                    <span style={{ flexBasis: '50%' }}>{`${ingredient.quantity} ${ingredient.unit}`}</span>
+                                </ListGroup.Item>
+                            ))}
+                        </ListGroup>
                         <Form.Group
                             className="mb-3"
                             controlId="addRecipeForm.Instructions"
